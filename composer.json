@@ -2,7 +2,7 @@
     "name": "avapardaz/interpreter-manager",
     "description": "Interpreter manager for any entity, anywhere",
     "keywords": [],
-    "homepage": "https://git.abrsa.ir/avx/interpreter-manager",
+    "homepage": "https://github.com/farzinkakh/interpreter-manager",
     "type": "library",
     "authors": [{
         "name": "Farzin kakh",

@@ -2,6 +2,8 @@
 
 namespace Avapardaz\InterpreterManager\Adapters;
 
+use Error;
+
 class ModelAdapter implements InterpreterAdapter
 {
     /**
@@ -138,6 +140,23 @@ class ModelAdapter implements InterpreterAdapter
     }
 
     /**
+     * Get attribute label from variable
+     * 
+     * @param string $attribute
+     * @param array $variable
+     * @return string
+     */
+    private function getAttributeLabel(string $attribute, array $variable): string
+    {
+        $prefix = $attribute;
+
+        if (array_key_exists('attributeLabels', $variable) && array_key_exists($attribute, $variable['attributeLabels']))
+            $prefix = $variable['attributeLabels'][$attribute];
+
+        return implode(" ", [$prefix, $variable['label']]);
+    }
+
+    /**
      * Interpretation variables
      * 
      * @return array
@@ -148,11 +167,19 @@ class ModelAdapter implements InterpreterAdapter
 
         foreach ($this->variables as $variable) {
             $model = is_string($variable['model']) ? $variable['model']::instance() : $variable['model'];
-            foreach ($model->attributes as $attr => $value) {
+
+            if (!array_key_exists('attributes', $variable) || count($variable['attributes']) > 0)
+                throw new Error('Model adapter variable must contain attributes property');
+
+            foreach ($variable['attributes'] as $attr) {
+
+                if (!isset($model->{$attr}))
+                    throw new Error("Model has no attribute named $attr");
+
                 array_push($result, [
-                    'label' => ($model->attributeLabels()[$attr] ?? $attr) . ' ' . $variable['label'],
+                    'label' => $this->getAttributeLabel($attr, $variable),
                     'key' => implode($this->seperator, [$variable['key'], $attr]),
-                    'defaultValue' => $value
+                    'defaultValue' => $model->{$attr}
                 ]);
             }
         }
@@ -171,7 +198,7 @@ class ModelAdapter implements InterpreterAdapter
 
         foreach ($this->variables as $variable) {
             foreach ($variable['model']->attributes as $attr => $value) {
-                if(is_string($value)) {
+                if (is_string($value)) {
                     $key = implode($this->seperator, [$variable['key'], $attr]);
                     $result[$key] = $value;
                 }
