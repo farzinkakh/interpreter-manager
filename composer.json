@@ -4,6 +4,7 @@
     "keywords": [],
     "homepage": "https://github.com/farzinkakh/interpreter-manager",
     "type": "library",
+    "license": "MIT",
     "authors": [{
         "name": "Farzin kakh",
         "homepage": "https://github.com/farzinkakh"
