@@ -168,13 +168,13 @@ class ModelAdapter implements InterpreterAdapter
         foreach ($this->variables as $variable) {
             $model = is_string($variable['model']) ? $variable['model']::instance() : $variable['model'];
 
-            if (!array_key_exists('attributes', $variable) || count($variable['attributes']) > 0)
+            if (!array_key_exists('attributes', $variable) || count($variable['attributes']) < 1)
                 throw new Error('Model adapter variable must contain attributes property');
 
             foreach ($variable['attributes'] as $attr) {
 
-                if (!isset($model->{$attr}))
-                    throw new Error("Model has no attribute named $attr");
+                if (!array_key_exists($attr, $model->attributes))
+                    throw new Error("Model has no attribute call '$attr'");
 
                 array_push($result, [
                     'label' => $this->getAttributeLabel($attr, $variable),
