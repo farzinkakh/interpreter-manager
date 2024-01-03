@@ -40,9 +40,9 @@ class ModelAdapter implements InterpreterAdapter
      */
     public function __construct(array $config = [])
     {
-        foreach (['seperator', 'variables'] as $attr)
-            if (array_key_exists($attr, $config))
-                $this->{$attr} = $config[$attr];
+        foreach (['seperator', 'variables'] as $attribute)
+            if (array_key_exists($attribute, $config))
+                $this->{$attribute} = $config[$attribute];
     }
 
     /**
@@ -76,6 +76,30 @@ class ModelAdapter implements InterpreterAdapter
     private function getDefaultValue(string|array $key): string
     {
         return $this->mode == InterpreterAdapterMode::Key ? "{{$this->getKey($key)}}" : "";
+    }
+
+    /**
+     * Check if model has attribute
+     * 
+     * @param mixed $model
+     * @param string $attribute
+     * @return bool
+     */
+    protected function hasAttribute(mixed $model, string $attribute): bool
+    {
+        return array_key_exists($attribute, $model->attributes);
+    }
+
+    /**
+     * Get model attribute
+     * 
+     * @param mixed $model
+     * @param string $attribute
+     * @return mixed
+     */
+    protected function getAttribute(mixed $model, string $attribute): mixed
+    {
+        return $model->attributes[$attribute];
     }
 
     /**
@@ -171,15 +195,15 @@ class ModelAdapter implements InterpreterAdapter
             if (!array_key_exists('attributes', $variable) || count($variable['attributes']) < 1)
                 throw new Error('Model adapter variable must contain attributes property');
 
-            foreach ($variable['attributes'] as $attr) {
+            foreach ($variable['attributes'] as $attribute) {
 
-                if (!array_key_exists($attr, $model->attributes))
-                    throw new Error("Model has no attribute call '$attr'");
+                if (!$this->hasAttribute($model, $attribute))
+                    throw new Error("Model has no attribute call '$attribute'");
 
                 array_push($result, [
-                    'label' => $this->getAttributeLabel($attr, $variable),
-                    'key' => implode($this->seperator, [$variable['key'], $attr]),
-                    'defaultValue' => $model->{$attr}
+                    'label' => $this->getAttributeLabel($attribute, $variable),
+                    'key' => implode($this->seperator, [$variable['key'], $attribute]),
+                    'defaultValue' => $this->getAttribute($model, $attribute)
                 ]);
             }
         }
@@ -197,11 +221,16 @@ class ModelAdapter implements InterpreterAdapter
         $result = [];
 
         foreach ($this->variables as $variable) {
-            foreach ($variable['model']->attributes as $attr => $value) {
-                if (is_string($value)) {
-                    $key = implode($this->seperator, [$variable['key'], $attr]);
-                    $result[$key] = $value;
-                }
+
+            if (is_string($variable['model']))
+                throw new Error('Model must be an instance during interpreting');
+
+            if (!array_key_exists('attributes', $variable) || count($variable['attributes']) < 1)
+                throw new Error('Model adapter variable must contain attributes property');
+
+            foreach ($variable['attributes'] as $attribute) {
+                $key = implode($this->seperator, [$variable['key'], $attribute]);
+                $result[$key] = $this->getAttribute($variable['model'], $attribute);
             }
         }
 
