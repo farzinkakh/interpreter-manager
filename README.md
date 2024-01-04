@@ -71,13 +71,10 @@ Here is an example of full InterpreterManager methods with types:
 
 namespace common\services;
 
-use common\models\Contract;
+use app\models\Contract;
 use Avapardaz\InterpreterManager\Adapters\BaseAdapter;
 use Avapardaz\InterpreterManager\Adapters\ModelAdapter;
 use Avapardaz\InterpreterManager\InterpreterManager;
-use common\models\User;
-use DateTime;
-use Yii;
 
 class ContractInterpreterManager extends InterpreterManager
 {
