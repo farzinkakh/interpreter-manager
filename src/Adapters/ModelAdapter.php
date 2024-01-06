@@ -203,7 +203,8 @@ class ModelAdapter implements InterpreterAdapter
                 array_push($result, [
                     'label' => $this->getAttributeLabel($attribute, $variable),
                     'key' => implode($this->seperator, [$variable['key'], $attribute]),
-                    'defaultValue' => $this->getAttribute($model, $attribute)
+                    'defaultValue' => $this->getAttribute($model, $attribute),
+                    'fillable' => array_key_exists('fillable', $variable) && (is_array($variable['fillable']) ? in_array($attribute, $variable['fillable']) : $variable['fillable'])
                 ]);
             }
         }
@@ -214,9 +215,10 @@ class ModelAdapter implements InterpreterAdapter
     /**
      * Interpretation interpretated variables
      * 
+     * @param array $values
      * @return array
      */
-    private function interpretatedVariables(): array
+    private function interpretatedVariables(array $values): array
     {
         $result = [];
 
@@ -230,7 +232,7 @@ class ModelAdapter implements InterpreterAdapter
 
             foreach ($variable['attributes'] as $attribute) {
                 $key = implode($this->seperator, [$variable['key'], $attribute]);
-                $result[$key] = $this->getAttribute($variable['model'], $attribute);
+                $result[$key] = $values[$key] ?? $this->getAttribute($variable['model'], $attribute);
             }
         }
 
@@ -248,7 +250,7 @@ class ModelAdapter implements InterpreterAdapter
     {
         $interpreted = $text;
 
-        foreach ($this->interpretatedVariables() as $key => $value)
+        foreach ($this->interpretatedVariables($values) as $key => $value)
             $interpreted = preg_replace("/{($key)}/", $value, $interpreted);
 
         return $interpreted;
