@@ -181,6 +181,22 @@ class ModelAdapter implements InterpreterAdapter
     }
 
     /**
+     * Get attribute formatter from variable
+     * 
+     * @param mixed $value
+     * @param string $attribute
+     * @param array $variable
+     * @return mixed
+     */
+    private function getAttributeFormatter(mixed $value, string $attribute, array $variable): mixed
+    {
+        if (array_key_exists('attributeFormatters', $variable) && array_key_exists($attribute, $variable['attributeFormatters']))
+            return ($variable['attributeFormatters'][$attribute])($value);
+
+        return $value;
+    }
+
+    /**
      * Interpretation variables
      * 
      * @return array
@@ -203,7 +219,7 @@ class ModelAdapter implements InterpreterAdapter
                 array_push($result, [
                     'label' => $this->getAttributeLabel($attribute, $variable),
                     'key' => implode($this->seperator, [$variable['key'], $attribute]),
-                    'defaultValue' => $this->getAttribute($model, $attribute),
+                    'defaultValue' => $this->getAttributeFormatter($this->getAttribute($model, $attribute), $attribute, $variable),
                     'fillable' => array_key_exists('fillable', $variable) && (is_array($variable['fillable']) ? in_array($attribute, $variable['fillable']) : $variable['fillable'])
                 ]);
             }
