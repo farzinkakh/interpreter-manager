@@ -2,8 +2,9 @@
 
 namespace Avapardaz\InterpreterManager;
 
-abstract class InterpreterManager extends Singleton
+abstract class InterpreterManager
 {
+    use Singleton;
 
     /**
      * The interpreter

@@ -7,7 +7,7 @@ namespace Avapardaz\InterpreterManager;
  * alternative to constructor and lets clients access the same instance of this
  * class over and over.
  */
-abstract class Singleton
+trait Singleton
 {
     /**
      * The Singleton's instance is stored in a static field. This field is an
@@ -49,7 +49,7 @@ abstract class Singleton
      * This implementation lets you subclass the Singleton class while keeping
      * just one instance of each subclass around.
      */
-    public static function getInstance(): Singleton
+    public static function getInstance(): self
     {
         $cls = static::class;
         if (!isset(self::$instances[$cls])) {
