@@ -106,11 +106,11 @@ abstract class InterpreterManager
             $fillable = isset($variable['fillable']) && $variable['fillable'] == true;
 
             if (!$fillable) {
-                $result[$variable['key']] = $variable['defaultValue'];
+                $result[$variable['key']] = $interpretable->variables[$variable['key']] ?? '';
                 continue;
             }
 
-            $result[$variable['key']] = $interpretable->variables[$variable['key']] ?? '';
+            $result[$variable['key']] = $interpretable->variables[$variable['key']] ?? $variable['defaultValue'];
         };
 
         return $result;
