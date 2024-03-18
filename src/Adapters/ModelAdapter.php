@@ -220,7 +220,8 @@ class ModelAdapter implements InterpreterAdapter
                     'label' => $this->getAttributeLabel($attribute, $variable),
                     'key' => implode($this->seperator, [$variable['key'], $attribute]),
                     'defaultValue' => $this->getAttributeFormatter($this->getAttribute($model, $attribute), $attribute, $variable),
-                    'fillable' => array_key_exists('fillable', $variable) && (is_array($variable['fillable']) ? in_array($attribute, $variable['fillable']) : $variable['fillable'])
+                    'fillable' => array_key_exists('fillable', $variable) && (is_array($variable['fillable']) ? in_array($attribute, $variable['fillable']) : $variable['fillable']),
+                    'directive' => array_key_exists('attributeInputDirectives', $variable) && array_key_exists($attribute, $variable['attributeInputDirectives']) ? $variable['attributeInputDirectives'][$attribute] : null
                 ]);
             }
         }
