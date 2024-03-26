@@ -170,7 +170,8 @@ class BaseAdapter implements InterpreterAdapter
                     'fillable' => $variable['fillable'] ?? true,
                     'label' => $variable['label'],
                     'key' => $this->getKey($variable['key']),
-                    'defaultValue' => $variable['defaultValue'] ?? ''
+                    'defaultValue' => $variable['defaultValue'] ?? '',
+                    'directive' => array_key_exists('inputDirectives', $variable) ? $variable['inputDirectives'] : []
                 ];
             },
             $this->variables
