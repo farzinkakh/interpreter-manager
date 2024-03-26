@@ -87,7 +87,7 @@ class ModelAdapter implements InterpreterAdapter
      */
     protected function hasAttribute(mixed $model, string $attribute): bool
     {
-        return array_key_exists($attribute, $model->attributes);
+        return array_key_exists($attribute, $model->attributes) || property_exists($model, $attribute);
     }
 
     /**
@@ -99,7 +99,7 @@ class ModelAdapter implements InterpreterAdapter
      */
     protected function getAttribute(mixed $model, string $attribute): mixed
     {
-        return $model->attributes[$attribute];
+        return array_key_exists($attribute, $model->attributes) ? $model->attributes[$attribute] : $model->{$attribute};
     }
 
     /**
@@ -221,7 +221,7 @@ class ModelAdapter implements InterpreterAdapter
                     'key' => implode($this->seperator, [$variable['key'], $attribute]),
                     'defaultValue' => $this->getAttributeFormatter($this->getAttribute($model, $attribute), $attribute, $variable),
                     'fillable' => array_key_exists('fillable', $variable) && (is_array($variable['fillable']) ? in_array($attribute, $variable['fillable']) : $variable['fillable']),
-                    'directive' => array_key_exists('attributeInputDirectives', $variable) && array_key_exists($attribute, $variable['attributeInputDirectives']) ? $variable['attributeInputDirectives'][$attribute] : null
+                    'directive' => array_key_exists('attributeInputDirectives', $variable) && array_key_exists($attribute, $variable['attributeInputDirectives']) ? $variable['attributeInputDirectives'][$attribute] : 'text'
                 ]);
             }
         }
